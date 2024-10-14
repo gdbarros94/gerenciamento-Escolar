@@ -207,7 +207,7 @@
                     <a class="navbar-brand me-auto" href="#">Agendamentos - Hoje</a>
                     <div class="d-flex align-items-center">
                         <i class="fas fa-moon me-3" id="theme-switch" style="cursor: pointer;"></i>
-                        {% if current_user is defined and current_user.is_authenticated %}
+                        {% if 'user_id' in session %}
                         <div class="dropdown">
                             <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="userMenu"
                                 data-bs-toggle="dropdown" aria-expanded="false">
