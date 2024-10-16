@@ -7,6 +7,7 @@ admin = Blueprint('admin', __name__)
 
 @admin.route('/admin')
 @admin_required
+@login_required
 def admin_panel():
     usuario = Usuario.query.get(session['user_id'])
     return render_template('admin_panel.html', usuario=usuario)
@@ -181,3 +182,8 @@ def reports():
 @admin_required
 def systen_config():
     return render_template('admin_config.html')
+
+@admin.route('/delete_resource/<int:id>', methods=['POST'])
+def delete_resource(id):
+    # Lógica para deletar o recurso com o ID fornecido
+    return redirect(url_for('admin.manage_resources'))
