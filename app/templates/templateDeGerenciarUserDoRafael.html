@@ -13,9 +13,6 @@
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="tab" href="#cadastro_usuarios">Usuários</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#cadastro_recursos">Recursos Alugáveis</a>
-        </li>
     </ul>
 
     <div class="tab-content mt-4">
@@ -152,70 +149,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-pane fade" id="cadastro_recursos">
-            <div class="row">
-                <div class="col-md-6">
-                    <h2 class="mb-4">Cadastro de Recursos Alugáveis</h2>
-                    <form id="formRecurso" action="{{ url_for('admin.manage_users') }}" method="POST">
-                        <input type="hidden" id="idRecurso" name="idRecurso" value="">
-                        <div class="mb-3">
-                            <label for="quantidadeRecurso" class="form-label">Quantidade</label>
-                            <input type="number" class="form-control" id="quantidadeRecurso" name="quantidadeRecurso" placeholder="Insira a quantidade de recursos" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="identificacaoRecurso" class="form-label">Identificação</label>
-                            <input type="text" class="form-control" id="identificacaoRecurso" name="identificacaoRecurso" placeholder="Insira a identificação do recurso" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="statusRecurso" class="form-label">Status</label>
-                            <select class="form-select" id="statusRecurso" name="statusRecurso" required>
-                                <option value="" selected disabled>Escolha o status do recurso</option>
-                                <option value="Disponível">Disponível</option>
-                                <option value="Em Uso">Em Uso</option>
-                                <option value="Reservado">Reservado</option>
-                                <option value="Manutenção">Manutenção</option>
-                            </select>
-                        </div>
-                        <button type="submit" id="btnSubmitRecurso" name="createRecurso" class="btn btn-primary w-100">Registrar Recurso</button>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                    <h3 class="mb-4">Recursos Cadastrados</h3>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Identificação</th>
-                                    <th>Quantidade</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for recurso in recursos %}
-                                <tr>
-                                    <td>{{ recurso.Identificacao }}</td>
-                                    <td>{{ recurso.Quantidade }}</td>
-                                    <td>{{ recurso.Status }}</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-warning" onclick="editRecurso('{{ recurso.ID_recurso }}', '{{ recurso.Quantidade }}', '{{ recurso.Identificacao }}', '{{ recurso.Status }}')">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <form action="{{ url_for('admin.delete_recurso', id=recurso.ID_recurso) }}" method="POST" style="display:inline-block;">
-                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover este recurso?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -240,16 +173,6 @@
         document.getElementById('btnSubmitUsuario').innerText = 'Atualizar Usuário';
         document.getElementById('btnSubmitUsuario').name = 'editUser';
         document.getElementById('cadastro_usuarios').scrollIntoView({behavior: 'smooth'});
-    }
-
-    function editRecurso(id, quantidade, identificacao, status) {
-        document.getElementById('idRecurso').value = id;
-        document.getElementById('quantidadeRecurso').value = quantidade;
-        document.getElementById('identificacaoRecurso').value = identificacao;
-        document.getElementById('statusRecurso').value = status;
-        document.getElementById('btnSubmitRecurso').innerText = 'Atualizar Recurso';
-        document.getElementById('btnSubmitRecurso').name = 'editRecurso';
-        document.getElementById('cadastro_recursos').scrollIntoView({behavior: 'smooth'});
     }
 </script>
 {% endblock %}
