@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
+        logger.debug(f"Verificando sessão: {session}")
         if 'user_id' not in session:
             flash('Por favor, faça login para acessar esta página.', 'error')
             return redirect(url_for('auth.login'))
@@ -43,7 +44,7 @@ def login():
             usuario = Usuario.query.filter_by(Email=email).first()
             if usuario and usuario.check_senha(senha):
                 session['user_id'] = usuario.ID_usuario
-                logger.info(f"Login bem-sucedido para o usuário: {usuario.Nome}")
+                logger.info(f"Login bem-sucedido para o usuário: {usuario.Nome}. ID: {session['user_id']}")
                 return redirect(next_url)
             else:
                 logger.warning(f"Falha no login para o email: {email}")
