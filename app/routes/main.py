@@ -32,3 +32,8 @@ def home():
 def serve_image(filename):
     return send_from_directory('templates/static/img', filename)
 
+@main.route('/user_config')
+@login_required
+def user_config():
+    # Renderizar o template de configurações de usuário
+    return render_template('user_config.html')

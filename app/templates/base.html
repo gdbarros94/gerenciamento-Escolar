@@ -23,15 +23,16 @@
             max-width: 250px;
             background-color: #34495E;
             color: #fff;
-            transition: all 0.3s;
             position: fixed;
             height: 100vh;
             z-index: 1000;
             left: 0;
+            top: 0;
+            overflow-y: auto;
         }
 
         #sidebar.hidden {
-            margin-left: -250px;
+            transform: translateX(-250px);
         }
 
         #sidebar .nav-link {
@@ -80,18 +81,19 @@
         .navbar {
             padding: 0.5rem 1rem;
             background-color: #f8f9fa;
-            transition: all 0.3s;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .navbar.hidden {
-               height: 0px;
-    display: none;
+            display: none;
         }
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
             #sidebar {
-                margin-left: -250px;
+                transform: translateX(-250px);
             }
 
             #content {
@@ -196,6 +198,18 @@
                         </li>
                     </ul>
                 </li>
+                {% if session.get('usuario_id') %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.user_config') }}">
+                        <i class="fas fa-cog me-2"></i> Configurações
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i> Sair
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
 
@@ -207,19 +221,8 @@
                     <a class="navbar-brand me-auto" href="#">Agendamentos - Hoje</a>
                     <div class="d-flex align-items-center">
                         <i class="fas fa-moon me-3" id="theme-switch" style="cursor: pointer;"></i>
-                        {% if current_user is defined and current_user.is_authenticated %}
-                        <div class="dropdown">
-                            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="userMenu"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle fa-2x"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                <li><a class="dropdown-item" href="#">Configurações</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sair</a></li>
-                            </ul>
-                        </div>
-                        {% else %}
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Entrar</a>
+                        {% if not session.get('usuario_id') %}
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Entrar</a>
                         {% endif %}
                     </div>
                 </div>

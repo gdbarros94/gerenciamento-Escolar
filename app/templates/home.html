@@ -1,60 +1,113 @@
 {% extends "base.html" %}
 
-{% block title %}Agendamentos - Hoje{% endblock %}
+{% block title %}Mapa de salas{% endblock %}
 
 {% block content %}
-    <!-- Conteúdo principal -->
-    <div class="main-content">
-        <!-- Título "Agendamentos recentes" -->
-        <h2>Agendamentos Recentes</h2>
-
-        <div class="agendamentos">
-            {% for agendamento in agendamentos %}
-            <div class="agendamento-card">
-                <p><strong>{{ agendamento.turma }}</strong></p>
-                <p>Sala Agendada: {{ agendamento.sala }}</p>
-                <p>Horário: {{ agendamento.horario_inicio }} - {{ agendamento.horario_fim }}</p>
-            </div>
-            {% else %}
-            <p>Nenhum agendamento encontrado.</p>
-            {% endfor %}
+<div class="container mt-4">
+    <h1 class="text-center mb-3">Mapa de Salas - Gerenciamento Escolar</h1>
+    <div id="relogio"></div>
+    <div id="mapa-todos-andares" class="andares-container">
+        {% for agendamento in agendamentos %}
+        <div class="sala ocupada">
+            <strong>{{ agendamento.sala }}</strong>
+            <p>Status: Ocupada</p>
+            <p>Turma: {{ agendamento.turma }}</p>
+            <p>Horário: {{ agendamento.horario_inicio }} - {{ agendamento.horario_fim }}</p>
         </div>
+        {% endfor %}
+    </div>
+</div>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e5ecf4; /* Cor de fundo geral */
-        }
+<style>
+    body {
+        background-color: #f0f4f8;
+        font-family: 'Roboto', sans-serif;
+        min-height: 100vh;
+    }
 
-        .main-content {
-            padding: 20px;
-        }
+    h1 {
+        font-family: 'Montserrat', sans-serif;
+        color: #34495E;
+    }
 
-        h2 {
-            color: #34495e; /* Cor do título */
-            margin-bottom: 20px;
-        }
+    .sala {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 5px;
+        margin: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 100%;
+        max-width: 250px;
+        height: 180px;
+        transition: transform 0.2s;
+        font-size: 0.9rem;
+        overflow: hidden;
+    }
 
-        .agendamentos {
-            display: flex;
-            justify-content: flex-start;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .sala:hover {
+        transform: scale(1.05);
+    }
 
-        .agendamento-card {
-            background-color: #34455e; /* Cor de fundo dos cartões */
-            color: white; /* Cor do texto */
-            padding: 18px;
-            border-radius: 10px;
-            width: 200px; /* Largura fixa dos cartões */
-            text-align: left;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease; /* Transição para efeito de hover */
-        }
+    .ocupada {
+        background-color: #34495E;
+        opacity: 1;
+        color: #fff;
+    }
 
-        .agendamento-card:hover {
-            transform: scale(1.05); /* Aumenta o cartão ao passar o mouse */
+    .andares-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    #relogio {
+        font-size: 1rem;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #555;
+    }
+
+    .sala strong {
+        font-size: 1.4rem;
+        color: inherit;
+    }
+
+    .sala p {
+        font-size: 1.05rem;
+        margin: 2px 0;
+        color: inherit;
+    }
+
+    @media (max-width: 768px) {
+        .sala {
+            max-width: none;
+            width: calc(50% - 20px);
         }
-    </style>
+    }
+
+    @media (max-width: 480px) {
+        .sala {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    function atualizarRelogio() {
+        const agora = new Date();
+        const horas = agora.getHours().toString().padStart(2, '0');
+        const minutos = agora.getMinutes().toString().padStart(2, '0');
+        const segundos = agora.getSeconds().toString().padStart(2, '0');
+        document.getElementById("relogio").textContent = `Hora atual: ${horas}:${minutos}:${segundos}`;
+    }
+
+    setInterval(atualizarRelogio, 1000);
+
+    window.onload = function() {
+        atualizarRelogio();
+    };
+</script>
 {% endblock %}

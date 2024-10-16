@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Configurações do Usuário</h2>
+    
+    <form method="POST" action="{{ url_for('auth.user_config') }}">
+        <div class="mb-3">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ usuario.Nome }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mail</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ usuario.Email }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="cargo" class="form-label">Cargo</label>
+            <input type="text" class="form-control" id="cargo" name="cargo" value="{{ usuario.Cargo }}" readonly>
+        </div>
+        
+        <div class="mb-3">
+            <label for="senha_atual" class="form-label">Senha Atual</label>
+            <input type="password" class="form-control" id="senha_atual" name="senha_atual">
+        </div>
+        
+        <div class="mb-3">
+            <label for="nova_senha" class="form-label">Nova Senha</label>
+            <input type="password" class="form-control" id="nova_senha" name="nova_senha">
+        </div>
+        
+        <div class="mb-3">
+            <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+            <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+    </form>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} mt-3" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% endblock %}
+
