@@ -213,11 +213,10 @@ class Professor(db.Model):
     __tablename__ = 'professores'
     ID_professor = db.Column(db.Integer, primary_key=True)
     Nome = db.Column(db.String(100), nullable=False)
-    Area = db.Column(db.String(50))
+    Area = db.Column(db.String(100))
     CargaHoraria = db.Column(db.Integer)
     TipoContrato = db.Column(db.String(50))
-
-    disponibilidades = db.relationship('ProfessorDisponibilidade', backref='professor', lazy=True)
+    disponibilidades = db.relationship('Disponibilidade', secondary='disponibilidade_professores', back_populates='professores')
 
     def __repr__(self):
         return f'<Professor {self.Nome}>'
@@ -233,19 +232,25 @@ class Professor(db.Model):
     def listar_professores(cls):
         return cls.query.all()
 
-class ProfessorDisponibilidade(db.Model):
-    __tablename__ = 'professores_disponibilidade'
-    ID_professor_disponibilidade = db.Column(db.Integer, primary_key=True)
-    ID_professor = db.Column(db.Integer, db.ForeignKey('professores.ID_professor'), nullable=False)
-    Data = db.Column(db.Date, nullable=False)
-    ID_turno = db.Column(db.Integer, db.ForeignKey('turnos.ID_turno'), nullable=False)
+class Disponibilidade(db.Model):
+    __tablename__ = 'disponibilidade'
+    ID_disponibilidade = db.Column(db.Integer, primary_key=True)
+    ID_dia = db.Column(db.Integer, db.ForeignKey('dias.ID_dia'), nullable=True)
+    ID_turno = db.Column(db.Integer, db.ForeignKey('turnos.ID_turno'), nullable=True)
+    Data = db.Column(db.Date, nullable=True)
+    professores = db.relationship('Professor', secondary='disponibilidade_professores', back_populates='disponibilidades')
 
     def __repr__(self):
-        return f'<ProfessorDisponibilidade {self.ID_professor_disponibilidade}>'
+        return f'<Disponibilidade {self.ID_disponibilidade}>'
 
-    @classmethod
-    def listar_disponibilidades(cls):
-        return cls.query.all()
+class DisponibilidadeProfessor(db.Model):
+    __tablename__ = 'disponibilidade_professores'
+    ID_disponibilidade_professor = db.Column(db.Integer, primary_key=True)
+    ID_professor = db.Column(db.Integer, db.ForeignKey('professores.ID_professor'), nullable=False)
+    ID_disponibilidade = db.Column(db.Integer, db.ForeignKey('disponibilidade.ID_disponibilidade'), nullable=False)
+
+    def __repr__(self):
+        return f'<DisponibilidadeProfessor {self.ID_disponibilidade_professor}>'
 
 class Turno(db.Model):
     __tablename__ = 'turnos'
@@ -274,11 +279,12 @@ class Agendamento(db.Model):
     ID_agendamento = db.Column(db.Integer, primary_key=True)
     TimeStamp_inicio = db.Column(db.DateTime, nullable=False)
     TimeStamp_fim = db.Column(db.DateTime, nullable=False)
-    ID_sala = db.Column(db.Integer, db.ForeignKey('salas.ID_sala'), nullable=False)
-    ID_dia = db.Column(db.Integer, db.ForeignKey('dias.ID_dia'), nullable=False)  # Coluna ID_dia adicionada
-    ID_locatario = db.Column(db.Integer, nullable=False)  # Coluna ID_locatario adicionada
-    ID_turma = db.Column(db.Integer, nullable=False)  # Coluna ID_turma adicionada
-    Tipo_locatario = db.Column(db.String(50), nullable=False)  # Coluna Tipo_locatario adicionada
+    ID_sala = db.Column(db.Integer, db.ForeignKey('salas.ID_sala'), nullable=True)
+    ID_dia = db.Column(db.Integer, db.ForeignKey('dias.ID_dia'), nullable=True)
+    ID_locatario = db.Column(db.Integer, nullable=True)
+    ID_turma = db.Column(db.Integer, db.ForeignKey('turmas.ID_turma'), nullable=True)
+    Tipo_locatario = db.Column(db.String(50), nullable=True)
+    ID_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.ID_usuario'), nullable=True)
 
     def __repr__(self):
         return f'<Agendamento {self.ID_agendamento}>'
