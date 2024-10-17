@@ -49,35 +49,6 @@ def manage_users():
             else:
                 flash('Usuário não encontrado.', 'danger')
 
-        # Criação de recurso
-        elif 'createRecurso' in request.form:
-            nome_recurso = request.form['nomeRecurso']
-            identificacao_recurso = request.form['identificacaoRecurso']
-            status_recurso = request.form['statusRecurso']
-            id_sala = request.form['salaRecurso']
-
-            novo_recurso = Recurso.adicionar_recurso(nome_recurso, id_sala, identificacao_recurso, status_recurso)
-            flash('Recurso registrado com sucesso!', 'success')
-
-        # Edição de recurso
-        elif 'editRecurso' in request.form:
-            id_recurso = request.form['idRecurso']
-            nome_recurso = request.form['nomeRecurso']
-            identificacao_recurso = request.form['identificacaoRecurso']
-            status_recurso = request.form['statusRecurso']
-            id_sala = request.form['salaRecurso']
-
-            recurso = Recurso.query.get(id_recurso)
-            if recurso:
-                recurso.Nome = nome_recurso
-                recurso.Identificacao = identificacao_recurso
-                recurso.Status = status_recurso
-                recurso.ID_sala = id_sala
-                db.session.commit()
-                flash('Recurso atualizado com sucesso!', 'success')
-            else:
-                flash('Recurso não encontrado.', 'danger')
-
         # Criação de professor
         elif 'createProfessor' in request.form:
             nome_professor = request.form['nomeProfessor']
@@ -132,11 +103,9 @@ def manage_users():
         return redirect(url_for('admin.manage_users'))
 
     usuarios = Usuario.listar_usuarios()
-    recursos = Recurso.listar_recursos()
-    salas = Sala.query.all()
     professores = Professor.query.all()
     turnos = Turno.query.all()
-    return render_template('templateDeGerenciarUserDoRafael.html', usuarios=usuarios, recursos=recursos, salas=salas, professores=professores, turnos=turnos)
+    return render_template('templateDeGerenciarUserDoRafael.html', usuarios=usuarios, professores=professores, turnos=turnos)
 
 @admin.route('/admin/delete-user/<int:id>', methods=['POST'])
 @login_required
@@ -149,19 +118,6 @@ def delete_user(id):
         flash('Usuário removido com sucesso!', 'success')
     else:
         flash('Usuário não encontrado.', 'danger')
-    return redirect(url_for('admin.manage_users'))
-
-@admin.route('/admin/delete-recurso/<int:id>', methods=['POST'])
-@login_required
-@admin_required
-def delete_recurso(id):
-    recurso = Recurso.query.get(id)
-    if recurso:
-        db.session.delete(recurso)
-        db.session.commit()
-        flash('Recurso removido com sucesso!', 'success')
-    else:
-        flash('Recurso não encontrado.', 'danger')
     return redirect(url_for('admin.manage_users'))
 
 @admin.route('/admin/delete-professor/<int:id>', methods=['POST'])
@@ -248,19 +204,60 @@ def manage_classrooms():
 @admin_required
 def manage_resources():
     if request.method == 'POST':
-        quantidade = request.form['quantidadeRecurso']
-        identificacao = request.form['identificacaoRecurso']
-        status = request.form['statusRecurso']
-        
-        novo_recurso = Recurso(Quantidade=quantidade, Identificacao=identificacao, Status=status)
-        db.session.add(novo_recurso)
-        db.session.commit()
-        
-        flash('Recurso registrado com sucesso!', 'success')
-        return redirect(url_for('admin.gerenciar_recursos'))
-    
+        # Criação de recurso
+        if 'createRecurso' in request.form:
+            nome_recurso = request.form['nomeRecurso']
+            identificacao_recurso = request.form['identificacaoRecurso']
+            status_recurso = request.form['statusRecurso']
+            id_sala = request.form['salaRecurso']
+
+            novo_recurso = Recurso(
+                Nome=nome_recurso, 
+                Identificacao=identificacao_recurso, 
+                Status=status_recurso, 
+                ID_sala=id_sala
+            )
+            db.session.add(novo_recurso)
+            db.session.commit()
+            flash('Recurso registrado com sucesso!', 'success')
+
+        # Edição de recurso
+        elif 'editRecurso' in request.form:
+            id_recurso = request.form['idRecurso']
+            nome_recurso = request.form['nomeRecurso']
+            identificacao_recurso = request.form['identificacaoRecurso']
+            status_recurso = request.form['statusRecurso']
+            id_sala = request.form['salaRecurso']
+
+            recurso = Recurso.query.get(id_recurso)
+            if recurso:
+                recurso.Nome = nome_recurso
+                recurso.Identificacao = identificacao_recurso
+                recurso.Status = status_recurso
+                recurso.ID_sala = id_sala
+                db.session.commit()
+                flash('Recurso atualizado com sucesso!', 'success')
+            else:
+                flash('Recurso não encontrado.', 'danger')
+
+    # Consulta de recursos e salas
     recursos = Recurso.query.all()
-    return render_template('gerenciar_recursos.html', recursos=recursos)
+    salas = Sala.query.all()
+    return render_template('gerenciar_recursos.html', recursos=recursos, salas=salas)
+
+# Deletar recurso
+@admin.route('/admin/delete_resource/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_admin_resource(id):
+    recurso = Recurso.query.get(id)
+    if recurso:
+        db.session.delete(recurso)
+        db.session.commit()
+        flash('Recurso removido com sucesso!', 'success')
+    else:
+        flash('Recurso não encontrado.', 'danger')
+    return redirect(url_for('admin.manage_resources'))
 
 # @admin.route('/admin/gerenciar-professores', methods=['GET', 'POST'])
 # @login_required
