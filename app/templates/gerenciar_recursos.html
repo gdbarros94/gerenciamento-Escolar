@@ -11,10 +11,13 @@
             <h2 class="mb-4">Cadastro de Recursos Alugáveis</h2>
             <form id="formRecurso" action="{{ url_for('admin.manage_resources') }}" method="POST">
                 <input type="hidden" id="idRecurso" name="idRecurso" value="">
+
+                <!-- Campo Nome Adicionado -->
                 <div class="mb-3">
-                    <label for="quantidadeRecurso" class="form-label">Quantidade</label>
-                    <input type="number" class="form-control" id="quantidadeRecurso" name="quantidadeRecurso" placeholder="Insira a quantidade de recursos" required>
+                    <label for="nomeRecurso" class="form-label">Nome do Recurso</label>
+                    <input type="text" class="form-control" id="nomeRecurso" name="nomeRecurso" placeholder="Insira o nome do recurso" required>
                 </div>
+
                 <div class="mb-3">
                     <label for="identificacaoRecurso" class="form-label">Identificação</label>
                     <input type="text" class="form-control" id="identificacaoRecurso" name="identificacaoRecurso" placeholder="Insira a identificação do recurso" required>
@@ -29,35 +32,59 @@
                         <option value="Manutenção">Manutenção</option>
                     </select>
                 </div>
+
+                <div class="mb-3">
+                    <label for="salaRecurso" class="form-label">Sala</label>
+                    <select class="form-select" id="salaRecurso" name="salaRecurso" required>
+                        <option value="" selected disabled>Escolha a sala</option>
+                        {% for sala in salas %}
+                        <option value="{{ sala.ID_sala }}">{{ sala.Nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
                 <button type="submit" id="btnSubmitRecurso" name="createRecurso" class="btn btn-primary w-100">Registrar Recurso</button>
             </form>
         </div>
+        
         <div class="col-md-6">
             <h3 class="mb-4">Recursos Cadastrados</h3>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>ID</th>
+                            <th>Nome</th> <!-- Mudança de "Quantidade" para "Nome" -->
                             <th>Identificação</th>
-                            <th>Quantidade</th>
                             <th>Status</th>
+                            <th>Sala</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for recurso in recursos %}
                         <tr>
+                            <td>{{ recurso.ID_recurso }}</td>
+                            <td>{{ recurso.Nome }}</td> <!-- Exibir o nome do recurso -->
                             <td>{{ recurso.Identificacao }}</td>
-                            <td>{{ recurso.Quantidade }}</td>
                             <td>{{ recurso.Status }}</td>
+                            <td>{{ recurso.sala.Nome }}</td>
                             <td>
-                                <button class="btn btn-sm btn-warning" onclick="editarRecurso('{{ recurso.ID_recurso }}', '{{ recurso.Quantidade }}', '{{ recurso.Identificacao }}', '{{ recurso.Status }}')">
+                                <button class="btn btn-sm btn-warning" 
+                                    onclick="editarRecurso('{{ recurso.ID_recurso }}', '{{ recurso.Nome }}', '{{ recurso.Identificacao }}', '{{ recurso.Status }}', '{{ recurso.ID_sala }}')">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <form action="{{ url_for('admin.delete_resource', id=recurso.ID_recurso) }}" method="POST" style="display:inline-block;">
+                                
+                                <form action="{{ url_for('admin.delete_admin_resource', id=recurso.ID_recurso) }}" method="POST" style="display:inline-block;">
                                     <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover este recurso?')">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash"></i> Remover
                                     </button>
+                                </form>
+                            </td>           
+                            
+                                
+                                
+                                
                                 </form>
                             </td>
                         </tr>
@@ -70,11 +97,12 @@
 </div>
 
 <script>
-    function editarRecurso(id, quantidade, identificacao, status) {
+    function editarRecurso(id, nome, identificacao, status, idSala) {
         document.getElementById('idRecurso').value = id;
-        document.getElementById('quantidadeRecurso').value = quantidade;
+        document.getElementById('nomeRecurso').value = nome;
         document.getElementById('identificacaoRecurso').value = identificacao;
         document.getElementById('statusRecurso').value = status;
+        document.getElementById('salaRecurso').value = idSala;
         document.getElementById('btnSubmitRecurso').innerText = 'Atualizar Recurso';
         document.getElementById('btnSubmitRecurso').name = 'editRecurso';
         document.getElementById('formRecurso').scrollIntoView({behavior: 'smooth'});
