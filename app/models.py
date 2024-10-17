@@ -109,9 +109,6 @@ class Recurso(db.Model):
     Identificacao = db.Column(db.String(50), unique=True, nullable=False)
     Status = db.Column(db.String(20), nullable=False)
 
-    def __repr__(self):
-        return f'<Recurso {self.Nome} da Sala {self.ID_sala}>'
-
     @classmethod
     def adicionar_recurso(cls, nome, id_sala, identificacao, status):
         novo_recurso = cls(Nome=nome, ID_sala=id_sala, Identificacao=identificacao, Status=status)

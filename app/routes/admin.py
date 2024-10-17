@@ -14,22 +14,23 @@ def admin_panel():
 
 # Rotas de Gerenciamento de Usuários
 
-@admin.route('/admin/manage-users', methods=['GET', 'POST'])
+@admin.route('/admin/manage_users', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def manage_users():
-    usuarios = Usuario.listar_usuarios()  # Listar todos os usuários para exibir no formulário
     if request.method == 'POST':
-        if 'createUser' in request.form:  # Identificar se é criação de usuário
+        # Criação de usuário
+        if 'createUser' in request.form:  
             nome_usuario = request.form['nomeUsuario']
             cargo = request.form['cargoUsuario']
             email = request.form['emailUsuario']
             senha = request.form['senhaUsuario']
 
             novo_usuario = Usuario.criar_usuario(nome_usuario, cargo, email, senha)
-
             flash('Usuário registrado com sucesso!', 'success')
-        elif 'editUser' in request.form:  # Identificar se é edição de usuário
+
+        # Edição de usuário
+        elif 'editUser' in request.form:  
             id_usuario = request.form['idUsuario']
             nome_usuario = request.form['nomeUsuario']
             cargo = request.form['cargoUsuario']
@@ -42,16 +43,47 @@ def manage_users():
                 usuario.Cargo = cargo
                 usuario.Email = email
                 if senha:
-                    usuario.set_senha(senha)  # Atualizar a senha se fornecida
+                    usuario.set_senha(senha)
                 db.session.commit()
-
                 flash('Usuário atualizado com sucesso!', 'success')
             else:
                 flash('Usuário não encontrado.', 'danger')
 
+        # Criação de recurso
+        elif 'createRecurso' in request.form:
+            nome_recurso = request.form['nomeRecurso']
+            identificacao_recurso = request.form['identificacaoRecurso']
+            status_recurso = request.form['statusRecurso']
+            id_sala = request.form['salaRecurso']
+
+            novo_recurso = Recurso.adicionar_recurso(nome_recurso, id_sala, identificacao_recurso, status_recurso)
+            flash('Recurso registrado com sucesso!', 'success')
+
+        # Edição de recurso
+        elif 'editRecurso' in request.form:
+            id_recurso = request.form['idRecurso']
+            nome_recurso = request.form['nomeRecurso']
+            identificacao_recurso = request.form['identificacaoRecurso']
+            status_recurso = request.form['statusRecurso']
+            id_sala = request.form['salaRecurso']
+
+            recurso = Recurso.query.get(id_recurso)
+            if recurso:
+                recurso.Nome = nome_recurso
+                recurso.Identificacao = identificacao_recurso
+                recurso.Status = status_recurso
+                recurso.ID_sala = id_sala
+                db.session.commit()
+                flash('Recurso atualizado com sucesso!', 'success')
+            else:
+                flash('Recurso não encontrado.', 'danger')
+
         return redirect(url_for('admin.manage_users'))
 
-    return render_template('templateDeGerenciarUserDoRafael.html', usuarios=usuarios)
+    usuarios = Usuario.listar_usuarios()
+    recursos = Recurso.listar_recursos()
+    salas = Sala.query.all()
+    return render_template('templateDeGerenciarUserDoRafael.html', usuarios=usuarios, recursos=recursos, salas=salas)
 
 @admin.route('/admin/delete-user/<int:id>', methods=['POST'])
 @login_required
@@ -66,6 +98,18 @@ def delete_user(id):
         flash('Usuário não encontrado.', 'danger')
     return redirect(url_for('admin.manage_users'))
 
+@admin.route('/admin/delete-recurso/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_recurso(id):
+    recurso = Recurso.query.get(id)
+    if recurso:
+        db.session.delete(recurso)
+        db.session.commit()
+        flash('Recurso removido com sucesso!', 'success')
+    else:
+        flash('Recurso não encontrado.', 'danger')
+    return redirect(url_for('admin.manage_users'))
 
 @admin.route('/admin/manage-buildings', methods=['GET', 'POST'])
 @login_required
