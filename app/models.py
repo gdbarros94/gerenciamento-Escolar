@@ -250,7 +250,7 @@ class ProfessorDisponibilidade(db.Model):
 class Turno(db.Model):
     __tablename__ = 'turnos'
     ID_turno = db.Column(db.Integer, primary_key=True)
-    Nome = db.Column(db.String(50), nullable=False)
+    Nome_turno = db.Column(db.String(50), nullable=False)
     Cor = db.Column(db.String(20))  # Coluna Cor adicionada
     HorarioInicio = db.Column(db.Time, nullable=True)  # Coluna HorarioInicio adicionada
     HorarioFim = db.Column(db.Time, nullable=True)  # Coluna HorarioFim adicionada
