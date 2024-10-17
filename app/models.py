@@ -250,17 +250,17 @@ class ProfessorDisponibilidade(db.Model):
 class Turno(db.Model):
     __tablename__ = 'turnos'
     ID_turno = db.Column(db.Integer, primary_key=True)
-    Nome = db.Column(db.String(50), nullable=False)
-    Cor = db.Column(db.String(20))  # Coluna Cor adicionada
-    HorarioInicio = db.Column(db.Time, nullable=True)  # Coluna HorarioInicio adicionada
-    HorarioFim = db.Column(db.Time, nullable=True)  # Coluna HorarioFim adicionada
+    Nome_turno = db.Column(db.String(50), nullable=False)
+    HorarioInicio = db.Column(db.Time, nullable=True)
+    HorarioFim = db.Column(db.Time, nullable=True)
+    Cor = db.Column(db.String(20))
 
     def __repr__(self):
-        return f'<Turno {self.Nome}>'
+        return f'<Turno {self.Nome_turno}>'
 
     @classmethod
-    def criar_turno(cls, nome, cor, horario_inicio, horario_fim):
-        novo_turno = cls(Nome=nome, Cor=cor, HorarioInicio=horario_inicio, HorarioFim=horario_fim)
+    def criar_turno(cls, nome_turno, cor, horario_inicio, horario_fim):
+        novo_turno = cls(Nome_turno=nome_turno, Cor=cor, HorarioInicio=horario_inicio, HorarioFim=horario_fim)
         db.session.add(novo_turno)
         db.session.commit()
         return novo_turno
@@ -275,7 +275,6 @@ class Agendamento(db.Model):
     TimeStamp_inicio = db.Column(db.DateTime, nullable=False)
     TimeStamp_fim = db.Column(db.DateTime, nullable=False)
     ID_sala = db.Column(db.Integer, db.ForeignKey('salas.ID_sala'), nullable=False)
-    ID_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.ID_usuario'), nullable=False)
     ID_dia = db.Column(db.Integer, db.ForeignKey('dias.ID_dia'), nullable=False)  # Coluna ID_dia adicionada
     ID_locatario = db.Column(db.Integer, nullable=False)  # Coluna ID_locatario adicionada
     ID_turma = db.Column(db.Integer, nullable=False)  # Coluna ID_turma adicionada

@@ -78,12 +78,65 @@ def manage_users():
             else:
                 flash('Recurso não encontrado.', 'danger')
 
+        # Criação de professor
+        elif 'createProfessor' in request.form:
+            nome_professor = request.form['nomeProfessor']
+            area = request.form['areaProfessor']
+            carga_horaria = request.form['cargaHoraria']
+            tipo_contrato = request.form['tipoContrato']
+
+            novo_professor = Professor(Nome=nome_professor, Area=area, CargaHoraria=carga_horaria, TipoContrato=tipo_contrato)
+            db.session.add(novo_professor)
+            db.session.commit()
+
+            # Adicionar disponibilidade do professor
+            data = request.form['dataProfessor']
+            id_turno = request.form['turnoProfessor']
+            nova_disponibilidade = ProfessorDisponibilidade(ID_professor=novo_professor.ID_professor, Data=data, ID_turno=id_turno)
+            db.session.add(nova_disponibilidade)
+            db.session.commit()
+
+            flash('Professor registrado com sucesso!', 'success')
+
+        # Edição de professor
+        elif 'editProfessor' in request.form:
+            id_professor = request.form['idProfessor']
+            nome_professor = request.form['nomeProfessor']
+            area = request.form['areaProfessor']
+            carga_horaria = request.form['cargaHoraria']
+            tipo_contrato = request.form['tipoContrato']
+
+            professor = Professor.query.get(id_professor)
+            if professor:
+                professor.Nome = nome_professor
+                professor.Area = area
+                professor.CargaHoraria = carga_horaria
+                professor.TipoContrato = tipo_contrato
+
+                # Atualizar disponibilidade do professor
+                data = request.form['dataProfessor']
+                id_turno = request.form['turnoProfessor']
+                disponibilidade = ProfessorDisponibilidade.query.filter_by(ID_professor=id_professor).first()
+                if disponibilidade:
+                    disponibilidade.Data = data
+                    disponibilidade.ID_turno = id_turno
+                else:
+                    nova_disponibilidade = ProfessorDisponibilidade(ID_professor=id_professor, Data=data, ID_turno=id_turno)
+                    db.session.add(nova_disponibilidade)
+
+                db.session.commit()
+                flash('Professor atualizado com sucesso!', 'success')
+            else:
+                flash('Professor não encontrado.', 'danger')
+
         return redirect(url_for('admin.manage_users'))
 
     usuarios = Usuario.listar_usuarios()
     recursos = Recurso.listar_recursos()
     salas = Sala.query.all()
-    return render_template('templateDeGerenciarUserDoRafael.html', usuarios=usuarios, recursos=recursos, salas=salas)
+    professores = Professor.query.all()
+    turnos = Turno.query.all()
+    return render_template('templateDeGerenciarUserDoRafael.html', usuarios=usuarios, recursos=recursos, salas=salas, professores=professores, turnos=turnos)
 
 @admin.route('/admin/delete-user/<int:id>', methods=['POST'])
 @login_required
@@ -109,6 +162,21 @@ def delete_recurso(id):
         flash('Recurso removido com sucesso!', 'success')
     else:
         flash('Recurso não encontrado.', 'danger')
+    return redirect(url_for('admin.manage_users'))
+
+@admin.route('/admin/delete-professor/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_professor(id):
+    professor = Professor.query.get(id)
+    if professor:
+        # Remover disponibilidades associadas
+        ProfessorDisponibilidade.query.filter_by(ID_professor=id).delete()
+        db.session.delete(professor)
+        db.session.commit()
+        flash('Professor removido com sucesso!', 'success')
+    else:
+        flash('Professor não encontrado.', 'danger')
     return redirect(url_for('admin.manage_users'))
 
 @admin.route('/admin/manage-buildings', methods=['GET', 'POST'])

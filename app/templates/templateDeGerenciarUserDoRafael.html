@@ -47,6 +47,18 @@
                             <label for="disponibilidade" class="form-label">Disponibilidade</label>
                             <input type="text" class="form-control" id="disponibilidade" name="disponibilidade" placeholder="Ex: Segunda a Sexta, manhã e tarde" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="dataProfessor" class="form-label">Data</label>
+                            <input type="date" name="dataProfessor" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="turnoProfessor" class="form-label">Turno</label>
+                            <select name="turnoProfessor" required>
+                                {% for turno in turnos %}
+                                <option value="{{ turno.ID_turno }}">{{ turno.Nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <button type="submit" id="btnSubmitProfessor" name="createProfessor" class="btn btn-primary w-100">Registrar Professor</button>
                     </form>
                 </div>
