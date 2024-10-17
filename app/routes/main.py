@@ -17,7 +17,7 @@ def home():
     agendamentos_completos = []
     for agendamento in agendamentos:
         turma = Turma.query.get(agendamento.ID_turma)  # Supondo que há uma chave estrangeira de Turma
-        sala = Sala.query.get(agendamento.ID_turma)
+        sala = Sala.query.get(agendamento.ID_sala)
         agendamentos_completos.append({
             'turma': turma.Curso if turma else 'Turma desconhecida',
             'sala': sala.Nome,  # Você precisará alterar para buscar a sala também se necessário

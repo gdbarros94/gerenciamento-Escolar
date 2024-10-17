@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-md-6">
             <h2 class="mb-4">Cadastro de Turmas</h2>
-            <form id="formTurma" action="{{ url_for('admin.manage_classes') }}" method="POST">
+            <form id="formTurma" action="{{ url_for('admin.manage_classrooms') }}" method="POST">
                 <input type="hidden" id="idTurma" name="idTurma" value="">
                 <div class="mb-3">
                     <label for="quantidadeTurma" class="form-label">Quantidade de Alunos</label>
@@ -28,7 +28,7 @@
                     <select class="form-select" id="idTurno" name="idTurno" required>
                         <option value="" selected disabled>Escolha o turno</option>
                         {% for turno in turnos %}
-                        <option value="{{ turno.ID_turno }}">{{ Nome_turno }}</option>
+                        <option value="{{ turno.ID_turno }}">{{ turno.Nome_turno }}</option>
                         {% endfor %}
                     </select>
                 </div>
