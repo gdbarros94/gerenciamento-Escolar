@@ -10,29 +10,31 @@ def index():
 
 @main.route('/home')
 def home():
-    # Buscar todos os agendamentos do banco de dados
-    agendamentos = Agendamento.query.all()
+    # Buscar todas as turmas do banco de dados
+    turmas = Turma.query.all()
 
-    # Para cada agendamento, também buscar a turma associada para exibir detalhes
-    agendamentos_completos = []
-    for agendamento in agendamentos:
-        turma = Turma.query.get(agendamento.ID_turma)  # Supondo que há uma chave estrangeira de Turma
-        sala = Sala.query.get(agendamento.ID_turma)
-        agendamentos_completos.append({
-            'turma': turma.Curso if turma else 'Turma desconhecida',
-            'sala': sala.Nome,  # Você precisará alterar para buscar a sala também se necessário
-            'horario_inicio': agendamento.TimeStamp_inicio.strftime('%H:%M'),
-            'horario_fim': agendamento.TimeStamp_fim.strftime('%H:%M')
+    # Para cada turma, preparar os detalhes para exibição
+    turmas_completas = []
+    for turma in turmas:
+        turno = Turno.query.get(turma.ID_turno)
+        turmas_completas.append({
+            'curso': turma.Curso,
+            'quantidade': turma.Quantidade,
+            'data_inicio': turma.Data_inicio.strftime('%d/%m/%Y'),
+            'data_fim': turma.Data_Fim.strftime('%d/%m/%Y'),
+            'turno': turno.Nome_turno if turno else 'Turno desconhecido',
+            'cor': turma.Cor
         })
 
-    # Renderizar o template e passar os dados dos agendamentos
+    # Renderizar o template e passar os dados das turmas
+    return render_template('home.html', turmas=turmas_completas)
     return render_template('home.html', agendamentos=agendamentos_completos)
 
 @main.route('/static/img/<path:filename>')
 def serve_image(filename):
     return send_from_directory('templates/static/img', filename)
 
-@main.route('/user_config')
+@main.route('/user_config', methods=['GET', 'POST'])
 @login_required
 def user_config():
     # Obtendo o usuário atual (supondo que ele esteja armazenado na sessão)
