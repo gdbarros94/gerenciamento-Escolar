@@ -256,9 +256,9 @@ class Turno(db.Model):
     __tablename__ = 'turnos'
     ID_turno = db.Column(db.Integer, primary_key=True)
     Nome_turno = db.Column(db.String(50), nullable=False)
-    HorarioInicio = db.Column(db.Time, nullable=True)
-    HorarioFim = db.Column(db.Time, nullable=True)
-    Cor = db.Column(db.String(20))
+    Cor = db.Column(db.String(20))  # Coluna Cor adicionada
+    HorarioInicio = db.Column(db.Time, nullable=True)  # Coluna HorarioInicio adicionada
+    HorarioFim = db.Column(db.Time, nullable=True)  # Coluna HorarioFim adicionada
 
     def __repr__(self):
         return f'<Turno {self.Nome_turno}>'

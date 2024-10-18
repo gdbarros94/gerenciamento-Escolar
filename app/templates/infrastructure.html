@@ -1,100 +1,207 @@
 {% extends "base.html" %}
 
-{% block title %}Gerenciar Prédios, Salas & Andares{% endblock %}
+{% block title %}Gerenciamento de Infraestrutura{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" id="manageTabs" role="tablist">
+<div class="container mt-4">
+    <h1 class="text-center mb-3">Gerenciamento de Infraestrutura</h1>
+
+    <ul class="nav nav-tabs justify-content-center mt-4" id="manageTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="predios-tab" data-bs-toggle="tab" data-bs-target="#predios" type="button" role="tab" aria-controls="predios" aria-selected="true">Prédios</button>
+            <a class="nav-link active" id="predios-tab" data-bs-toggle="tab" href="#predios" role="tab" aria-controls="predios" aria-selected="true">Prédios</a>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="salas-tab" data-bs-toggle="tab" data-bs-target="#salas" type="button" role="tab" aria-controls="salas" aria-selected="false">Salas</button>
+            <a class="nav-link" id="salas-tab" data-bs-toggle="tab" href="#salas" role="tab" aria-controls="salas" aria-selected="false">Salas</a>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="andares-tab" data-bs-toggle="tab" data-bs-target="#andares" type="button" role="tab" aria-controls="andares" aria-selected="false">Andares</button>
+            <a class="nav-link" id="andares-tab" data-bs-toggle="tab" href="#andares" role="tab" aria-controls="andares" aria-selected="false">Andares</a>
         </li>
     </ul>
 
-    <!-- Tab content -->
-    <div class="tab-content">
+    <div class="tab-content mt-4">
         <!-- Prédios -->
         <div class="tab-pane fade show active" id="predios" role="tabpanel" aria-labelledby="predios-tab">
-            <section class="form-section mt-4">
-                <h3>Cadastro de Prédios</h3>
-                <form method="POST" action="{{ url_for('admin.manage_buildings') }}">
-                    <input type="hidden" name="cadastro_predios" value="1">
-                    <div class="mb-3">
-                        <label for="nomePredio" class="form-label">Nome do Prédio</label>
-                        <input type="text" class="form-control" id="nomePredio" name="nomePredio" placeholder="Digite o nome do prédio" required>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="mb-4">Cadastro de Prédios</h2>
+                    <form id="formPredio" action="{{ url_for('admin.manage_buildings') }}" method="POST">
+                        <input type="hidden" id="idPredio" name="idPredio" value="">
+                        <div class="mb-3">
+                            <label for="nomePredio" class="form-label">Nome do Prédio</label>
+                            <input type="text" class="form-control" id="nomePredio" name="Nome" placeholder="Digite o nome do prédio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="andaresPredio" class="form-label">Número de Andares</label>
+                            <input type="number" class="form-control" id="andaresPredio" name="Andares" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="corPredio" class="form-label">Cor do Prédio</label>
+                            <input type="color" class="form-control form-control-color" id="corPredio" name="Cor" value="#563d7c" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="enderecoPredio" class="form-label">Endereço do Prédio</label>
+                            <input type="text" class="form-control" id="enderecoPredio" name="Endereco" placeholder="Digite o endereço do prédio" required>
+                        </div>
+                        <button type="submit" id="btnSubmitPredio" name="createPredio" class="btn btn-primary w-100">Registrar Prédio</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="mb-4">Prédios Cadastrados</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Andares</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for predio in predios %}
+                                <tr>
+                                    <td>{{ predio.Nome }}</td>
+                                    <td>{{ predio.Andares }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" onclick="editPredio('{{ predio.ID_predio }}', '{{ predio.Nome }}', '{{ predio.Andares }}', '{{ predio.Cor }}', '{{ predio.Endereco }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="{{ url_for('admin.delete_predio', id=predio.ID_predio) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover este prédio?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="mb-3">
-                        <label for="andaresPredio" class="form-label">Número de Andares</label>
-                        <input type="number" class="form-control" id="andaresPredio" name="andaresPredio" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="corPredio" class="form-label">Cor do Prédio</label>
-                        <input type="color" class="form-control form-control-color" id="corPredio" name="corPredio" value="#563d7c" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Registrar Prédio</button>
-                </form>
-            </section>
+                </div>
+            </div>
         </div>
 
         <!-- Salas -->
         <div class="tab-pane fade" id="salas" role="tabpanel" aria-labelledby="salas-tab">
-            <section class="form-section mt-4">
-                <h3>Cadastro de Salas</h3>
-                <form method="POST" action="{{ url_for('admin.manage_buildings') }}">
-                    <input type="hidden" name="cadastro_salas" value="1">
-                    <div class="mb-3">
-                        <label for="nomeSala" class="form-label">Nome da Sala</label>
-                        <input type="text" class="form-control" id="nomeSala" name="nomeSala" placeholder="Digite o nome da sala" required>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="mb-4">Cadastro de Salas</h2>
+                    <form id="formSala" action="{{ url_for('admin.manage_buildings') }}" method="POST">
+                        <input type="hidden" id="idSala" name="idSala" value="">
+                        <div class="mb-3">
+                            <label for="nomeSala" class="form-label">Nome da Sala</label>
+                            <input type="text" class="form-control" id="nomeSala" name="Nome" placeholder="Digite o nome da sala" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="capacidadeSala" class="form-label">Capacidade</label>
+                            <input type="number" class="form-control" id="capacidadeSala" name="Capacidade" placeholder="Capacidade da sala" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipoSala" class="form-label">Tipo da Sala</label>
+                            <input type="text" class="form-control" id="tipoSala" name="Tipo" placeholder="Digite o tipo da sala" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="andarSala" class="form-label">Andar</label>
+                            <select class="form-select" id="andarSala" name="ID_andar" required>
+                                <option value="">Selecione um andar</option>
+                                {% for andar in andares %}
+                                    <option value="{{ andar.ID_andar }}">{{ andar.Numero }} - {{ andar.predio.Nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" id="btnSubmitSala" name="createSala" class="btn btn-primary w-100">Registrar Sala</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="mb-4">Salas Cadastradas</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Capacidade</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for sala in salas %}
+                                <tr>
+                                    <td>{{ sala.Nome }}</td>
+                                    <td>{{ sala.Capacidade }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" onclick="editSala('{{ sala.ID_sala }}', '{{ sala.Nome }}', '{{ sala.Capacidade }}', '{{ sala.Tipo }}', '{{ sala.ID_andar }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="{{ url_for('admin.delete_sala', id=sala.ID_sala) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover esta sala?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="mb-3">
-                        <label for="capacidadeSala" class="form-label">Capacidade</label>
-                        <input type="number" class="form-control" id="capacidadeSala" name="capacidadeSala" placeholder="Capacidade da sala" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="tipoSala" class="form-label">Tipo da Sala</label>
-                        <input type="text" class="form-control" id="tipoSala" name="tipoSala" placeholder="Digite o tipo da sala" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="corSala" class="form-label">Cor de Destaque</label>
-                        <input type="color" class="form-control form-control-color" id="corSala" name="corSala" value="#563d7c" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Registrar Sala</button>
-                </form>
-            </section>
+                </div>
+            </div>
         </div>
 
         <!-- Andares -->
         <div class="tab-pane fade" id="andares" role="tabpanel" aria-labelledby="andares-tab">
-            <section class="form-section mt-4">
-                <h3>Cadastro de Andares</h3>
-                <form method="POST" action="{{ url_for('admin.manage_buildings') }}">
-                    <input type="hidden" name="cadastro_andares" value="1">
-                    <div class="mb-3">
-                        <label for="numeroAndar" class="form-label">Número do Andar</label>
-                        <input type="number" class="form-control" id="numeroAndar" name="numeroAndar" required>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="mb-4">Cadastro de Andares</h2>
+                    <form id="formAndar" action="{{ url_for('admin.manage_buildings') }}" method="POST">
+                        <input type="hidden" id="idAndar" name="idAndar" value="">
+                        <div class="mb-3">
+                            <label for="numeroAndar" class="form-label">Número do Andar</label>
+                            <input type="number" class="form-control" id="numeroAndar" name="Numero" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="predioAndar" class="form-label">Prédio</label>
+                            <select class="form-select" id="predioAndar" name="ID_predio" required>
+                                <option value="">Selecione um prédio</option>
+                                {% for predio in predios %}
+                                    <option value="{{ predio.ID_predio }}">{{ predio.Nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" id="btnSubmitAndar" name="createAndar" class="btn btn-primary w-100">Registrar Andar</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h3 class="mb-4">Andares Cadastrados</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Prédio</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for andar in andares %}
+                                <tr>
+                                    <td>{{ andar.Numero }}</td>
+                                    <td>{{ andar.predio.Nome }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning" onclick="editAndar('{{ andar.ID_andar }}', '{{ andar.Numero }}', '{{ andar.ID_predio }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="{{ url_for('admin.delete_andar', id=andar.ID_andar) }}" method="POST" style="display:inline-block;">
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover este andar?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="mb-3">
-                        <label for="predioAndar" class="form-label">Prédio</label>
-                        <select class="form-control" id="predioAndar" name="predioAndar" required>
-                            <option value="">Selecione um prédio</option>
-                            {% for predio in predios %}
-                                <option value="{{ predio.id }}">{{ predio.nome }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="corAndar" class="form-label">Cor do Andar</label>
-                        <input type="color" class="form-control form-control-color" id="corAndar" name="corAndar" value="#563d7c" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Registrar Andar</button>
-                </form>
-            </section>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -102,6 +209,37 @@
 
 {% block extra_scripts %}
 <script>
+    function editPredio(id, nome, andares, cor, endereco) {
+        document.getElementById('idPredio').value = id;
+        document.getElementById('nomePredio').value = nome;
+        document.getElementById('andaresPredio').value = andares;
+        document.getElementById('corPredio').value = cor;
+        document.getElementById('enderecoPredio').value = endereco;
+        document.getElementById('btnSubmitPredio').innerText = 'Atualizar Prédio';
+        document.getElementById('btnSubmitPredio').name = 'editPredio';
+        document.getElementById('predios').scrollIntoView({behavior: 'smooth'});
+    }
+
+    function editSala(id, nome, capacidade, tipo, idAndar) {
+        document.getElementById('idSala').value = id;
+        document.getElementById('nomeSala').value = nome;
+        document.getElementById('capacidadeSala').value = capacidade;
+        document.getElementById('tipoSala').value = tipo;
+        document.getElementById('andarSala').value = idAndar;
+        document.getElementById('btnSubmitSala').innerText = 'Atualizar Sala';
+        document.getElementById('btnSubmitSala').name = 'editSala';
+        document.getElementById('salas').scrollIntoView({behavior: 'smooth'});
+    }
+
+    function editAndar(id, numero, idPredio) {
+        document.getElementById('idAndar').value = id;
+        document.getElementById('numeroAndar').value = numero;
+        document.getElementById('predioAndar').value = idPredio;
+        document.getElementById('btnSubmitAndar').innerText = 'Atualizar Andar';
+        document.getElementById('btnSubmitAndar').name = 'editAndar';
+        document.getElementById('andares').scrollIntoView({behavior: 'smooth'});
+    }
+
     // Atualizar a lista de prédios no formulário de Andares quando a aba for ativada
     document.addEventListener('DOMContentLoaded', () => {
         const manageTabs = new bootstrap.Tab(document.querySelector('#manageTabs a[href="#andares"]'));

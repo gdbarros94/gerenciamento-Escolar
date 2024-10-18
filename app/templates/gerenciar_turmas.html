@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciamento de Turmas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center mb-3">Gerenciamento de Turmas</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="mb-4">Cadastro de Turmas</h2>
+            <form id="formTurma" action="{{ url_for('admin.manage_classrooms') }}" method="POST">
+                <input type="hidden" id="idTurma" name="idTurma" value="">
+                <div class="mb-3">
+                    <label for="quantidadeTurma" class="form-label">Quantidade de Alunos</label>
+                    <input type="number" class="form-control" id="quantidadeTurma" name="quantidadeTurma" required>
+                </div>
+                <div class="mb-3">
+                    <label for="dataInicio" class="form-label">Data de Início</label>
+                    <input type="date" class="form-control" id="dataInicio" name="dataInicio" required>
+                </div>
+                <div class="mb-3">
+                    <label for="dataFim" class="form-label">Data de Fim</label>
+                    <input type="date" class="form-control" id="dataFim" name="dataFim" required>
+                </div>
+                <div class="mb-3">
+                    <label for="idTurno" class="form-label">Turno</label>
+                    <select class="form-select" id="idTurno" name="idTurno" required>
+                        <option value="" selected disabled>Escolha o turno</option>
+                        {% for turno in turnos %}
+                        <option value="{{ turno.ID_turno }}">{{ turno.Nome_turno }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="curso" class="form-label">Curso</label>
+                    <input type="text" class="form-control" id="curso" name="curso" required>
+                </div>
+                <div class="mb-3">
+                    <label for="cor" class="form-label">Cor</label>
+                    <input type="color" class="form-control" id="cor" name="cor" required>
+                </div>
+                <button type="submit" id="btnSubmitTurma" name="createTurma" class="btn btn-primary w-100">Registrar Turma</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h3 class="mb-4">Turmas Cadastradas</h3>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Quantidade</th>
+                            <th>Início</th>
+                            <th>Fim</th>
+                            <th>Turno</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for turma in turmas %}
+                        <tr>
+                            <td>{{ turma.Curso }}</td>
+                            <td>{{ turma.Quantidade }}</td>
+                            <td>{{ turma.Data_inicio.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ turma.Data_Fim.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ turma.Nome_turno }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-warning" onclick="editarTurma('{{ turma.ID_turma }}', '{{ turma.Quantidade }}', '{{ turma.Data_inicio }}', '{{ turma.Data_Fim }}', '{{ turma.ID_turno }}', '{{ turma.Curso }}', '{{ turma.Cor }}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <form action="{{ url_for('admin.delete_class', id=turma.ID_turma) }}" method="POST" style="display:inline-block;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover esta turma?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editarTurma(id, quantidade, dataInicio, dataFim, idTurno, curso, cor) {
+        document.getElementById('idTurma').value = id;
+        document.getElementById('quantidadeTurma').value = quantidade;
+        document.getElementById('dataInicio').value = dataInicio;
+        document.getElementById('dataFim').value = dataFim;
+        document.getElementById('idTurno').value = idTurno;
+        document.getElementById('curso').value = curso;
+        document.getElementById('cor').value = cor;
+        document.getElementById('btnSubmitTurma').innerText = 'Atualizar Turma';
+        document.getElementById('btnSubmitTurma').name = 'editTurma';
+        document.getElementById('formTurma').scrollIntoView({behavior: 'smooth'});
+    }
+</script>
+{% endblock %}
