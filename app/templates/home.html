@@ -7,12 +7,13 @@
     <h1 class="text-center mb-3">Mapa de Salas - Gerenciamento Escolar</h1>
     <div id="relogio"></div>
     <div id="mapa-todos-andares" class="andares-container">
-        {% for agendamento in agendamentos %}
-        <div class="sala ocupada">
-            <strong>{{ agendamento.sala }}</strong>
-            <p>Status: Ocupada</p>
-            <p>Turma: {{ agendamento.turma }}</p>
-            <p>Horário: {{ agendamento.horario_inicio }} - {{ agendamento.horario_fim }}</p>
+        {% for turma in turmas %}
+        <div class="sala ocupada" style="background-color: {{ turma.cor }};">
+            <strong>{{ turma.curso }}</strong>
+            <p>Quantidade: {{ turma.quantidade }}</p>
+            <p>Início: {{ turma.data_inicio }}</p>
+            <p>Fim: {{ turma.data_fim }}</p>
+            <p>Turno: {{ turma.turno }}</p>
         </div>
         {% endfor %}
     </div>
@@ -35,7 +36,6 @@
         border-radius: 8px;
         padding: 5px;
         margin: 10px;
-        background-color: #ffffff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         text-align: center;
         width: 100%;
@@ -51,7 +51,6 @@
     }
 
     .ocupada {
-        background-color: #34495E;
         opacity: 1;
         color: #fff;
     }

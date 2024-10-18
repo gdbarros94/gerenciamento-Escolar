@@ -4,39 +4,55 @@
 <div class="container mt-5">
     <h2 class="mb-4">Configurações do Usuário</h2>
     
-    <form method="POST" action="{{ url_for('auth.user_config') }}">
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" value="{{ usuario.Nome }}" required>
+    <div class="card">
+        <div class="card-body">
+            <!-- Mostrando informações do usuário -->
+            <h5 class="card-title">Informações Pessoais</h5>
+            
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" value="{{ usuario.Nome }}" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" value="{{ usuario.Email }}" readonly>
+            </div>
+
+            <div class="mb-3">
+                <label for="cargo" class="form-label">Cargo</label>
+                <input type="text" class="form-control" id="cargo" value="{{ usuario.Cargo }}" readonly>
+            </div>
         </div>
-        
-        <div class="mb-3">
-            <label for="email" class="form-label">E-mail</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ usuario.Email }}" required>
+    </div>
+
+    <hr>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <!-- Seção para mudar a senha -->
+            <h5 class="card-title">Alterar Senha</h5>
+
+            <form method="POST" action="{{ url_for('main.user_config') }}">
+                <div class="mb-3">
+                    <label for="senha_atual" class="form-label">Senha Atual</label>
+                    <input type="password" class="form-control" id="senha_atual" name="senha_atual" placeholder="Digite sua senha atual">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="nova_senha" class="form-label">Nova Senha</label>
+                    <input type="password" class="form-control" id="nova_senha" name="nova_senha" placeholder="Digite sua nova senha">
+                </div>
+
+                <div class="mb-3">
+                    <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+                    <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua nova senha">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+            </form>
         </div>
-        
-        <div class="mb-3">
-            <label for="cargo" class="form-label">Cargo</label>
-            <input type="text" class="form-control" id="cargo" name="cargo" value="{{ usuario.Cargo }}" readonly>
-        </div>
-        
-        <div class="mb-3">
-            <label for="senha_atual" class="form-label">Senha Atual</label>
-            <input type="password" class="form-control" id="senha_atual" name="senha_atual">
-        </div>
-        
-        <div class="mb-3">
-            <label for="nova_senha" class="form-label">Nova Senha</label>
-            <input type="password" class="form-control" id="nova_senha" name="nova_senha">
-        </div>
-        
-        <div class="mb-3">
-            <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
-            <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha">
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-    </form>
+    </div>
 </div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -50,4 +66,3 @@
 {% endwith %}
 
 {% endblock %}
-

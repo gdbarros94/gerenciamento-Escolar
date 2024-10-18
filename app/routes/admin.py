@@ -50,12 +50,6 @@ def manage_users():
                 flash('User not found.', 'danger')
 
         # Criação de professor
-        # Toda a estrutura do professor deve ser revista. 
-        # 
-        # 
-        # 
-        # Arruma ae
-        
         elif 'createProfessor' in request.form:
             nome_professor = request.form['nomeProfessor']
             area = request.form['areaProfessor']
@@ -68,13 +62,11 @@ def manage_users():
 
             # Adicionar disponibilidade do professor
             id_turno = request.form['turnoProfessor']
-            # nova_disponibilidade = DisponibilidadeProfessor(ID_professor=novo_professor.ID_professor, ID_turno=id_turno)
-            #db.session.add(nova_disponibilidade)
+            nova_disponibilidade = DisponibilidadeProfessor(ID_professor=novo_professor.ID_professor, ID_turno=id_turno)
+            db.session.add(nova_disponibilidade)
             db.session.commit()
 
             flash('Professor registrado com sucesso!', 'success')
-            novo_recurso = Recurso.adicionar_recurso(nome, id_sala, identificacao, status)
-            flash('Resource registered successfully!', 'success')
 
         # Edição de professor
         elif 'editProfessor' in request.form:
@@ -83,13 +75,6 @@ def manage_users():
             area = request.form['areaProfessor']
             carga_horaria = request.form['cargaHoraria']
             tipo_contrato = request.form['tipoContrato']
-        # Resource editing
-        elif 'editRecurso' in request.form:
-            id_recurso = request.form['idRecurso']
-            nome = request.form['nomeRecurso']
-            identificacao = request.form['identificacaoRecurso']
-            status = request.form['statusRecurso']
-            id_sala = request.form['salaRecurso']
 
             professor = Professor.query.get(id_professor)
             if professor:
@@ -99,27 +84,18 @@ def manage_users():
                 professor.TipoContrato = tipo_contrato
 
                 # Atualizar disponibilidade do professor
-        
-                # id_turno = request.form['turnoProfessor']
-                # disponibilidade = DisponibilidadeProfessor.query.filter_by(ID_professor=id_professor).first()
-                # if disponibilidade:
-                #     disponibilidade.ID_turno = id_turno
-                # else:
-                #     nova_disponibilidade = DisponibilidadeProfessor(ID_professor=id_professor, ID_turno=id_turno)
-                #     db.session.add(nova_disponibilidade)
+                id_turno = request.form['turnoProfessor']
+                disponibilidade = DisponibilidadeProfessor.query.filter_by(ID_professor=id_professor).first()
+                if disponibilidade:
+                    disponibilidade.ID_turno = id_turno
+                else:
+                    nova_disponibilidade = DisponibilidadeProfessor(ID_professor=id_professor, ID_turno=id_turno)
+                    db.session.add(nova_disponibilidade)
 
-            recurso = Recurso.query.get(id_recurso)
-            if recurso:
-                recurso.Nome = nome
-                recurso.Identificacao = identificacao
-                recurso.Status = status
-                recurso.ID_sala = id_sala
                 db.session.commit()
                 flash('Professor atualizado com sucesso!', 'success')
-                flash('Resource updated successfully!', 'success')
             else:
                 flash('Professor não encontrado.', 'danger')
-                flash('Resource not found.', 'danger')
 
         return redirect(url_for('admin.manage_users'))
 
@@ -156,52 +132,137 @@ def delete_professor(id):
         flash('Professor não encontrado.', 'danger')
     return redirect(url_for('admin.manage_users'))
 
-
-
-
-
-
-
-
-
-
-
 @admin.route('/admin/manage-buildings', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def manage_buildings():
     if request.method == 'POST':
-        if 'cadastro_salas' in request.form:
-            nome = request.form['nomeSala']
-            capacidade = request.form['capacidadeSala']
-            tipo = request.form['tipoSala']
-            id_andar = request.form['andarSala']
+        if 'createPredio' in request.form:
+            nome = request.form['Nome']
+            andares = request.form['Andares']
+            cor = request.form['Cor']
+            endereco = request.form['Endereco']
             
-            nova_sala = Sala.criar_sala(nome, tipo, id_andar, capacidade)
-            flash('Room registered successfully!', 'success')
+            novo_predio = Predio(Nome=nome, Andares=andares, Cor=cor, Endereco=endereco)
+            db.session.add(novo_predio)
+            db.session.commit()
+            flash('Prédio registrado com sucesso!', 'success')
         
-        elif 'cadastro_predios' in request.form:
-            nome = request.form['nomePredio']
-            andares = request.form['andaresPredio']
-            cor = request.form['corPredio']
-            endereco = request.form['enderecoPredio']
+        elif 'editPredio' in request.form:
+            id_predio = request.form['idPredio']
+            nome = request.form['Nome']
+            andares = request.form['Andares']
+            cor = request.form['Cor']
+            endereco = request.form['Endereco']
             
-            novo_predio = Predio.criar_predio(nome, andares, cor, endereco)
-            flash('Building registered successfully!', 'success')
+            predio = Predio.query.get(id_predio)
+            if predio:
+                predio.Nome = nome
+                predio.Andares = andares
+                predio.Cor = cor
+                predio.Endereco = endereco
+                db.session.commit()
+                flash('Prédio atualizado com sucesso!', 'success')
+            else:
+                flash('Prédio não encontrado.', 'danger')
         
-        elif 'cadastro_andares' in request.form:
-            numero = request.form['numeroAndar']
-            id_predio = request.form['predioAndar']
+        elif 'createSala' in request.form:
+            nome = request.form['Nome']
+            capacidade = request.form['Capacidade']
+            tipo = request.form['Tipo']
+            id_andar = request.form['ID_andar']
             
-            novo_andar = Andar.adicionar_andar(numero, id_predio)
-            flash('Floor registered successfully!', 'success')
+            nova_sala = Sala(Nome=nome, Capacidade=capacidade, Tipo=tipo, ID_andar=id_andar)
+            db.session.add(nova_sala)
+            db.session.commit()
+            flash('Sala registrada com sucesso!', 'success')
+        
+        elif 'editSala' in request.form:
+            ID_sala = request.form['idSala']
+            nome = request.form['Nome']
+            capacidade = request.form['Capacidade']
+            tipo = request.form['Tipo']
+            id_andar = request.form['ID_andar']
+            
+            sala = Sala.query.get(ID_sala)
+            if sala:
+                sala.Nome = nome
+                sala.Capacidade = capacidade
+                sala.Tipo = tipo
+                sala.ID_andar = id_andar
+                db.session.commit()
+                flash('Sala atualizada com sucesso!', 'success')
+            else:
+                flash('Sala não encontrada.', 'danger')
+        
+        elif 'createAndar' in request.form:
+            numero = request.form['Numero']
+            id_predio = request.form['ID_predio']
+            
+            novo_andar = Andar(Numero=numero, ID_predio=id_predio)
+            db.session.add(novo_andar)
+            db.session.commit()
+            flash('Andar registrado com sucesso!', 'success')
+        
+        elif 'editAndar' in request.form:
+            id_andar = request.form['idAndar']
+            numero = request.form['Numero']
+            id_predio = request.form['ID_predio']
+            
+            andar = Andar.query.get(id_andar)
+            if andar:
+                andar.Numero = numero
+                andar.ID_predio = id_predio
+                db.session.commit()
+                flash('Andar atualizado com sucesso!', 'success')
+            else:
+                flash('Andar não encontrado.', 'danger')
         
         return redirect(url_for('admin.manage_buildings'))
     
-    predios = Predio.listar_predios()
-    salas = Sala.listar_salas()
-    andares = Andar.listar_andares()
+    predios = Predio.query.all()
+    salas = Sala.query.all()
+    andares = Andar.query.all()
     return render_template('infrastructure.html', predios=predios, salas=salas, andares=andares)
+
+@admin.route('/admin/delete_predio/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_predio(id):
+    predio = Predio.query.get(id)
+    if predio:
+        db.session.delete(predio)
+        db.session.commit()
+        flash('Prédio removido com sucesso!', 'success')
+    else:
+        flash('Prédio não encontrado.', 'danger')
+    return redirect(url_for('admin.manage_buildings'))
+
+@admin.route('/admin/delete_sala/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_sala(id):
+    sala = Sala.query.get(id)
+    if sala:
+        db.session.delete(sala)
+        db.session.commit()
+        flash('Sala removida com sucesso!', 'success')
+    else:
+        flash('Sala não encontrada.', 'danger')
+    return redirect(url_for('admin.manage_buildings'))
+
+@admin.route('/admin/delete_andar/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_andar(id):
+    andar = Andar.query.get(id)
+    if andar:
+        db.session.delete(andar)
+        db.session.commit()
+        flash('Andar removido com sucesso!', 'success')
+    else:
+        flash('Andar não encontrado.', 'danger')
+    return redirect(url_for('admin.manage_buildings'))
 
 @admin.route('/admin/manage-classrooms', methods=['GET', 'POST'])
 @login_required
@@ -265,40 +326,38 @@ def delete_class(id):
 @admin_required
 def manage_resources():
     if request.method == 'POST':
-        quantidade = request.form['quantidadeRecurso']
-        identificacao = request.form['identificacaoRecurso']
-        status = request.form['statusRecurso']
+        if 'createRecurso' in request.form:
+            nome = request.form['nomeRecurso']
+            ID_sala = request.form['salaRecurso']
+            identificacao = request.form['identificacaoRecurso']
+            status = request.form['statusRecurso']
+            
+            novo_recurso = Recurso.adicionar_recurso(nome, ID_sala, identificacao, status)
+            flash('Recurso registrado com sucesso!', 'success')
         
-        novo_recurso = Recurso(Quantidade=quantidade, Identificacao=identificacao, Status=status)
-        db.session.add(novo_recurso)
-        db.session.commit()
+        elif 'editRecurso' in request.form:
+            id_recurso = request.form['idRecurso']
+            nome = request.form['nomeRecurso']
+            identificacao = request.form['identificacaoRecurso']
+            status = request.form['statusRecurso']
+            ID_sala = request.form['salaRecurso']
+
+            recurso = Recurso.query.get(id_recurso)
+            if recurso:
+                recurso.Nome = nome
+                recurso.Identificacao = identificacao
+                recurso.Status = status
+                recurso.ID_sala = ID_sala
+                db.session.commit()
+                flash('Recurso atualizado com sucesso!', 'success')
+            else:
+                flash('Recurso não encontrado.', 'danger')
         
-        flash('Recurso registrado com sucesso!', 'success')
-        return redirect(url_for('admin.gerenciar_recursos'))
+        return redirect(url_for('admin.manage_resources'))
     
     recursos = Recurso.query.all()
-    return render_template('gerenciar_recursos.html', recursos=recursos)
-
-# @admin.route('/admin/gerenciar-professores', methods=['GET', 'POST'])
-# @login_required
-# @admin_required
-# def gerenciar_professores():
-#     if request.method == 'POST':
-#         nome_professor = request.form['nomeProfessor']
-#         area = request.form['areaProfessor']
-#         carga_horaria = request.form['cargaHoraria']
-#         tipo_contrato = request.form['tipoContrato']
-#         disponibilidade = request.form['disponibilidade']
-        
-#         novo_professor = Professor(Nome=nome_professor, Area=area, CargaHoraria=carga_horaria, TipoContrato=tipo_contrato, Disponibilidade=disponibilidade)
-#         db.session.add(novo_professor)
-#         db.session.commit()
-        
-#         flash('Professor registrado com sucesso!', 'success')
-#         return redirect(url_for('admin.gerenciar_professores'))
-    
-#     professores = Professor.query.all()
-#     return render_template('gerenciar_professores.html', professores=professores)
+    salas = Sala.query.all()
+    return render_template('gerenciar_recursos.html', recursos=recursos, salas=salas)
 
 @admin.route('/admin/reports')
 @login_required
@@ -312,7 +371,7 @@ def reports():
 def system_config():
     return render_template('admin_config.html')
 
-@admin.route('/delete_resource/<int:id>', methods=['POST'])
+@admin.route('/admin/delete_resource/<int:id>', methods=['POST'])
 @login_required
 @admin_required
 def delete_resource(id):
